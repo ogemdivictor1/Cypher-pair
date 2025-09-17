@@ -1,127 +1,25 @@
-const express = require('express');
-const QRCode = require('qrcode');
-const fs = require('fs');
-const path = require('path');
-const pino = require('pino');
-const { makeid } = require('./gen-id');
-const { upload } = require('./mega');
-
-const {
-  makeWASocket,
-  useMultiFileAuthState,
-  delay,
-  Browsers,
-  fetchLatestBaileysVersion
-} = require('@whiskeysockets/baileys');
-
-const router = express.Router();
-
-function removeFile(filePath) {
-  if (fs.existsSync(filePath)) {
-    fs.rmSync(filePath, { recursive: true, force: true });
-  }
+{
+"name": "web-pair",
+    "version": "0.0.1",
+    "description": "A multi functional whatsapp bot Web paircode.",
+    "main": "index.js",
+    "scripts": {
+      "start": "pm2 start index.js --deep-monitoring --attach --name malvin-xd",
+      "stop": "pm2 stop malvin-xd",
+     "restart": "pm2 restart malvin-xd"
+    },
+  "dependencies": {
+   "@whiskeysockets/baileys": "^6.7.17",          
+    "@adiwajshing/keyed-db": "^0.2.4",
+    "qrcode": "^1.5.3",
+    "awesome-phonenumber": "^2.64.0",
+    "pino": "^8.1.0",
+    "phone" : "3.1.30",
+    "body-parser": "^1.20.1",
+    "express": "^4.18.1",
+    "path": "^0.12.7",
+    "megajs": "1.1.7",
+    "pm2": "^5.4.0",
+    "async-mutex":"0.4.1"
+   }
 }
-
-router.get('/', async (req, res) => {
-  const id = makeid();
-  const tempPath = path.join(__dirname, 'temp', id);
-
-  async function MALVIN_XD_PAIR_CODE() {
-    const { state, saveCreds } = await useMultiFileAuthState(tempPath);
-    const version = await fetchLatestBaileysVersion();
-
-    try {
-      const sock = makeWASocket({
-        version,
-        auth: state,
-        printQRInTerminal: false,
-        logger: pino({ level: 'silent' }),
-        browser: Browsers.firefox('CypherPair')
-      });
-
-      sock.ev.on('creds.update', saveCreds);
-
-      sock.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect, qr } = update;
-
-        if (qr) {
-          res.setHeader('Content-Type', 'image/png');
-          res.end(await QRCode.toBuffer(qr));
-        }
-
-        if (connection === 'open') {
-          await delay(5000);
-
-          const credsPath = path.join(tempPath, 'creds.json');
-          const data = fs.readFileSync(credsPath);
-          const stream = fs.createReadStream(credsPath);
-
-          const megaUrl = await upload(stream, `${sock.user.id}.json`);
-          const sessionId = megaUrl.replace('https://mega.nz/file/', '');
-          const messageText = `malvin~${sessionId}`;
-
-          const codeMsg = await sock.sendMessage(sock.user.id, { text: messageText });
-
-          const desc = `*Hey there, MALVIN-XD User!* 👋🏻
-
-Thanks for using *CYPHER-PAIR* — your session has been successfully created!
-
-🔐 *Session ID:* Sent above  
-⚠️ *Keep it safe!* Do NOT share this ID with anyone.
-
-——————
-
-*✅ Stay Updated:*  
-Join our official WhatsApp Channel:  
-https://whatsapp.com/channel/0029VbBWBqG84OmAohvemP1e
-
-> *© Powered by CYPHER DEALS*
-Stay cool and hack smart. ✌🏻`;
-
-          await sock.sendMessage(sock.user.id, {
-            text: desc,
-            contextInfo: {
-              externalAdReply: {
-                title: 'ᴍᴀʟᴠɪɴ-xᴅ 𝕮𝖔𝖓𝖓𝖊𝖈𝖙𝖊𝖉',
-                thumbnailUrl: 'https://files.catbox.moe/bqs70b.jpg',
-                sourceUrl: 'https://whatsapp.com/channel/0029VbA6MSYJUM2TVOzCSb2A',
-                mediaType: 1,
-                renderLargerThumbnail: true
-              }
-            }
-          }, { quoted: codeMsg });
-
-          await delay(10);
-          await sock.ws.close();
-          removeFile(tempPath);
-          console.log(`👤 ${sock.user.id} Connected ✅ Restarting process...`);
-          process.exit();
-        }
-
-        if (
-          connection === 'close' &&
-          lastDisconnect?.error?.output?.statusCode !== 401
-        ) {
-          await delay(10);
-          MALVIN_XD_PAIR_CODE();
-        }
-      });
-    } catch (err) {
-      console.log('Service restarted due to error');
-      removeFile(tempPath);
-      if (!res.headersSent) {
-        res.status(503).send({ code: '❗ Service Unavailable' });
-      }
-    }
-  }
-
-  await MALVIN_XD_PAIR_CODE();
-});
-
-// Auto-restart every 30 minutes
-setInterval(() => {
-  console.log('☘️ Restarting process...');
-  process.exit();
-}, 1800000); // 30 minutes
-
-module.exports = router;
