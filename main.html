@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYPHER PAIR</title>
   <style>
     body {
       background-color: black;
@@ -13,13 +13,7 @@
       height: 100vh;
       margin: 0;
       color: white;
-    }
-
-    {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "url": "https://railway.app",
-            "logo": "https://files.catbox.moe/39z8jd.jpg"
+      flex-direction: column;
     }
 
     .button-container {
@@ -29,51 +23,30 @@
       align-items: center;
     }
 
-    h3 {
-      margin-top: -40px;
-      opacity: 0;
-      animation: fadeIn 3s forwards;
-    }
-
     .button {
-      width: 140px;
+      width: 180px;
       height: 40px;
+      margin: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 0px 15px;
-      background-color: red;
+      background: linear-gradient(0deg, #000, #272727);
       border-radius: 10px;
       border: none;
       color: white;
-      position: relative;
+      font-weight: bold;
       cursor: pointer;
-      font-weight: 900;
-      transition-duration: .2s;
-      background: linear-gradient(0deg, #000, #272727);
+      position: relative;
       text-decoration: none;
     }
 
-  
-    footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #222; /* Darker gray footer background */
-    color: #fff;
-    padding: 10px 0;
-    text-align: center;
-    font-size: 14px;
-    
-  }
     .button:before, .button:after {
       content: '';
       position: absolute;
       left: -2px;
       top: -2px;
       border-radius: 10px;
-      background: linear-gradient(45deg, #48ff00, #15ff00, #000000,#000000, #ff0000);
+      background: linear-gradient(45deg, #48ff00, #15ff00, #000000, #ff0000);
       background-size: 400%;
       width: calc(100% + 4px);
       height: calc(100% + 4px);
@@ -81,51 +54,65 @@
       animation: steam 10s linear infinite;
     }
 
-    @keyframes steam {
-      0% {
-        background-position: 0 0;
-      }
-
-      50% {
-        background-position: 400% 0;
-      }
-
-      100% {
-        background-position: 0 0;
-      }
-    }
-
     .button:after {
       filter: blur(50px);
     }
 
-    .button span {
-      z-index: 1;
+    @keyframes steam {
+      0% { background-position: 0 0; }
+      50% { background-position: 400% 0; }
+      100% { background-position: 0 0; }
     }
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #222;
+      color: #fff;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div class="button-container">
-    <h3> CYPHER SESSION</h3>
-    <div></div>
-    <a href="/qr" class="button" target="_blank"> <span>QR-CODE</span> </a> <br>
-    <a href="/pair" class="button" target="_blank"> <span>PAIRING-CODE</span> </a> <br>
-    <a href="https://github.com/XdKing2/MALVIN-XD/fork" class="button" target="_blank"> <span>FORK MALVIN XD</span> </a> <br> </a>
-    <a href="https://whatsapp.com/channel/0029VbA6MSYJUM2TVOzCSb2A" class="button" target="_blank"> <span>WhatsApp</span> </a> <br>
+    <h2>CYPHER SESSION</h2>
 
-    <p>HAVE ANY ERROR CLICK ERROR BUTTON</p>
+    <a href="/qr" class="button" target="_blank">QR-CODE</a>
 
-    <a href="https://wa.me/263780166288" class="button" target="_blank"> <span>ERROR</span> </a> <br>
+    <button class="button" onclick="startPairing()">PAIRING-CODE</button>
 
-    <footer>
-     CYPHER &copy; <span id="currentYear"></span>
-    </footer>
-  
+    <a href="https://github.com/XdKing2/MALVIN-XD/fork" class="button" target="_blank">FORK MALVIN XD</a>
+
+    <a href="https://whatsapp.com/channel/0029VbA6MSYJUM2TVOzCSb2A" class="button" target="_blank">WhatsApp</a>
+
+    <p>HAVE ANY ERROR? CLICK BELOW</p>
+
+    <a href="https://wa.me/263780166288" class="button" target="_blank">ERROR</a>
+  </div>
+
+  <footer>
+    CYPHER &copy; <span id="currentYear"></span>
+  </footer>
+
+  <script>
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+    function makeid(length = 8) {
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return result;
+    }
+
+    function startPairing() {
+      const pairCode = makeid(8);
+      window.open(`/qr?id=${pairCode}`, '_blank');
+    }
+  </script>
 </body>
 </html>
