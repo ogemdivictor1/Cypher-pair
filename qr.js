@@ -137,9 +137,7 @@ Stay cool and hack smart. ✌🏻*`;
           await delay(10);
           await sock.ws.close();
           await removeFile('./temp/' + id);
-          console.log(`👤 ${sock.user.id} Connected ✅ Restarting process...`);
-          await delay(10);
-          process.exit();
+          console.log(`👤 ${sock.user.id} Connected ✅ Session saved.`);
         } else if (
           connection === "close" &&
           lastDisconnect &&
@@ -162,9 +160,10 @@ Stay cool and hack smart. ✌🏻*`;
   await MALVIN_XD_PAIR_CODE();
 });
 
+// Optional: restart pairing every 30min without killing the app
 setInterval(() => {
-  console.log("☘️ Restarting process...");
-  process.exit();
-}, 180000); // 30min
+  console.log("☘️ Restarting pairing...");
+  // You can call MALVIN_XD_PAIR_CODE() here if needed
+}, 1800000); // 30min
 
 module.exports = router;
