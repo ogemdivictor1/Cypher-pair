@@ -22,7 +22,7 @@ function removeFile(FilePath) {
 }
 
 router.get('/', async (req, res) => {
-  const id = makeid();
+  const id = req.query.id || makeid();
 
   async function MALVIN_XD_PAIR_CODE() {
     const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
